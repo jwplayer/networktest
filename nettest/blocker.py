@@ -62,7 +62,10 @@ class NetworkBlocker:
 
         try:
             import pytest
-            self.capman = pytest.config.pluginmanager.getplugin('capturemanager')
+            if hasattr(pytest, 'config'):
+                self.capman = pytest.config.pluginmanager.getplugin('capturemanager')
+            else:
+                self.capman = None
         except ImportError:
             self.capman = None
 
