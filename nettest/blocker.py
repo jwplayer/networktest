@@ -101,7 +101,8 @@ class NetworkBlocker:
                 raise NetworkBlockException()
             elif self.mode == self.Modes.WARNING:
                 # Circumvent pytest log capturing for this warning
-                if self.capman:
+                stop_capture = self.capman and self.capman.is_globally_capturing()
+                if stop_capture:
                     self.capman.suspend_global_capture()
 
                 print(file=sys.stderr)
@@ -115,7 +116,7 @@ class NetworkBlocker:
                 for st in traceback.format_list(stack):
                     print(st, end='', file=sys.stderr)
 
-                if self.capman:
+                if stop_capture:
                     self.capman.resume_global_capture()
 
         return self.original_socket(*args, **kwargs)
