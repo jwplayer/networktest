@@ -26,11 +26,11 @@ class ApiMockEndpoint:
         # unimplemented but this could be a nice to have
         # self.response_mock = MagicMock()
 
-    def matches(self, data):
+    def __request_matches(self, data):
         return re.match(self.match_pattern, data)
 
-    def get_matched_response(self, data, mock):
-        match = self.matches(data)
+    def __get_matched_response(self, data, mock):
+        match = self.__request_matches(data)
         if match:
             groups = {key: value.decode() for key, value in match.groupdict().items()}
             (code, body) = self.response(groups)
@@ -82,7 +82,7 @@ class ApiMock(HttpMock):
         super().__enter__()
         return ApiMockEndpoints(self.endpoints)
 
-    def is_request_body(self, data):
+    def __is_request_body(self, data):
         """
             True if the provided request data is for a request body.
             This is needed because the request body is sent separately from the rest of the request.
@@ -91,14 +91,14 @@ class ApiMock(HttpMock):
         #   I wanted to keep this simple and avoid reimplementing too much HTTP functionality
         return data[-4:] != b'\r\n\r\n'
 
-    def get_request_hostname(self, data):
+    def __get_request_hostname(self, data):
         """
             Get a hostname from an HTTP request.
         """
         start = b'\r\nHost: '
         end = b'\r\n'
 
-        if not self.is_request_body(data) and start in data:
+        if not self.__is_request_body(data) and start in data:
             hostname = data[data.find(start) + len(start):]
             hostname = hostname[:hostname.find(end)]
             if b':' in hostname:
@@ -106,7 +106,7 @@ class ApiMock(HttpMock):
             hostname = hostname.decode()
             return hostname
 
-    def get_default_response(self):
+    def __get_default_response(self):
         """
             The default response to return on all HTTP requests for the specified hostnames.
             By default this is a MagicMock.
@@ -115,16 +115,16 @@ class ApiMock(HttpMock):
         mock.getcode = lambda: mock.code
         return mock
 
-    def get_targeted_response(self, data):
+    def __get_targeted_response(self, data):
         """
             A more specific response to return on all HTTP requests for the specified hostnames.
 
             Uses :class:`ApiMockEndpoint` to match regular expression for an endpoint to specific responses.
         """
-        mock = self.get_default_response()
+        mock = self.__get_default_response()
 
         for endpoint in self.endpoints:
-            if endpoint.get_matched_response(data, mock):
+            if endpoint.__get_matched_response(data, mock):
                 break
 
         return mock
@@ -141,9 +141,9 @@ class ApiMock(HttpMock):
                 data(bytes): bytes that will be sent in the HTTP request if not stopped.
                 mock(context manager): A reference to the context manager that defines this mockable_send method.
         """
-        hostname = mock.get_request_hostname(data)
+        hostname = mock.__get_request_hostname(data)
         if hostname and hostname in mock.hostnames:
-            response_mock = mock.get_targeted_response(data)
+            response_mock = mock.__get_targeted_response(data)
             if mock.mode == mock.Modes.MOCK:
                 self.response_class = lambda *args, **kwargs: response_mock
 
