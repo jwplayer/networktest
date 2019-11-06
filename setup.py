@@ -25,6 +25,7 @@ setup(
     license='Apache License 2.0',
     setup_requires=[
         'pytest-runner',
+        'pytest-flake8',
         'setuptools_scm',
     ],
     tests_require=[
