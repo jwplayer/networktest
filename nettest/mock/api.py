@@ -8,13 +8,19 @@ from .http import HttpMock
 
 class HttpApiMockEndpoint:
     """
-        Describes mocking behavior for a single endpoint on an API managed by :class:`HttpApiMock`
+        Describes mocking behavior for a single endpoint on an API managed by
+          :class:`HttpApiMock`
 
         Attributes:
-          operation_id (str): Used to identify the endpoint when accessing this object from :class:`HttpApiMockEndpoints`. This should be the operationId in the service's OpenAPI spec if it has one.
-          match_pattern (str): Regular expression used to identify the endpoint.
-          response (function, lambda): Function called to generate a response from a request to this endpoint.
-          request_mock (MagicMock): Mock that contains information about when this endpoint was called and with what arguments.
+          operation_id (str): Used to identify the endpoint when accessing
+            this object from :class:`HttpApiMockEndpoints`. This should be the
+            operationId in the service's OpenAPI spec if it has one.
+          match_pattern (str): Regular expression used to identify
+            the endpoint.
+          response (function, lambda): Function called to generate
+            a response from a request to this endpoint.
+          request_mock (MagicMock): Mock that contains information about
+            when this endpoint was called and with what arguments.
     """
 
     def __init__(self, operation_id, match_pattern, response):
@@ -32,7 +38,9 @@ class HttpApiMockEndpoint:
     def _get_matched_response(self, data, mock):
         match = self.__request_matches(data)
         if match:
-            groups = {key: value.decode() for key, value in match.groupdict().items()}
+            groups = {
+                key: value.decode() for key, value in match.groupdict().items()
+            }
             (code, body) = self.response(groups)
             mock.code = code
             if body is not None:
@@ -55,11 +63,14 @@ class HttpApiMockEndpoint:
 
 class HttpApiMockEndpoints:
     """
-        Returned by :class:`HttpApiMock`.__enter__ and used to expose a group of :class:`HttpApiMockEndpoint` that describes an API.
+        Returned by :class:`HttpApiMock`.__enter__ and used to expose
+          a group of :class:`HttpApiMockEndpoint` that describes an API.
     """
 
     def __init__(self, endpoints):
-        self.endpoints = {endpoint.operation_id: endpoint for endpoint in endpoints}
+        self.endpoints = {
+            endpoint.operation_id: endpoint for endpoint in endpoints
+        }
 
     def __getattr__(self, name):
         return self.endpoints[name]
@@ -85,10 +96,12 @@ class HttpApiMock(HttpMock):
     def __is_request_body(self, data):
         """
             True if the provided request data is for a request body.
-            This is needed because the request body is sent separately from the rest of the request.
+            This is needed because the request body is sent separately from
+              the rest of the request.
         """
         # I'm sure there's a much better way to determine this but
-        #   I wanted to keep this simple and avoid reimplementing too much HTTP functionality
+        #   I wanted to keep this simple and avoid reimplementing
+        #   too much HTTP functionality
         return data[-4:] != b'\r\n\r\n'
 
     def __get_request_hostname(self, data):
@@ -108,7 +121,8 @@ class HttpApiMock(HttpMock):
 
     def __get_default_response(self):
         """
-            The default response to return on all HTTP requests for the specified hostnames.
+            The default response to return on all HTTP requests for the
+              specified hostnames.
             By default this is a MagicMock.
         """
         mock = MagicMock()
@@ -118,9 +132,11 @@ class HttpApiMock(HttpMock):
 
     def __get_targeted_response(self, data):
         """
-            A more specific response to return on all HTTP requests for the specified hostnames.
+            A more specific response to return on all HTTP requests for
+              the specified hostnames.
 
-            Uses :class:`HttpApiMockEndpoint` to match regular expression for an endpoint to specific responses.
+            Uses :class:`HttpApiMockEndpoint` to match regular expression for
+              an endpoint to specific responses.
         """
         mock = self.__get_default_response()
 
@@ -138,9 +154,12 @@ class HttpApiMock(HttpMock):
             False is returned to cancel the actual HTTP request.
 
             Args:
-                self(http.client.HTTPConnection): Reference to the HTTPConnection whose send method was called.
-                data(bytes): bytes that will be sent in the HTTP request if not stopped.
-                mock(context manager): A reference to the context manager that defines this mockable_send method.
+                self(http.client.HTTPConnection): Reference to
+                  the HTTPConnection whose send method was called.
+                data(bytes): bytes that will be sent in the HTTP request if
+                  not stopped.
+                mock(context manager): A reference to the context manager that
+                  defines this mockable_send method.
         """
         hostname = mock.__get_request_hostname(data)
         if hostname and hostname in mock.hostnames:

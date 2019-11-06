@@ -3,13 +3,18 @@ import traceback
 import socket
 from enum import Enum, auto
 
+
 class NetworkBlockException(Exception):
     """
-        An exception that is raised when a network request is made while using NetworkBlocker in STRICT mode.
+        An exception that is raised when a network request is made while using
+        NetworkBlocker in STRICT mode.
     """
 
     def __init__(self):
-        return super().__init__('A test that should not be doing so opened a network connection.')
+        return super().__init__(
+            'A test that should not be doing so opened a network connection.'
+        )
+
 
 class NetworkBlocker:
 
@@ -24,7 +29,7 @@ class NetworkBlocker:
 
     class AllowablePackages:
         """
-            Lists of packages that may be permitted to make requests in 
+            Lists of packages that may be permitted to make requests in
             certain situations
         """
         # You may want to allow these for functional tests
@@ -34,36 +39,53 @@ class NetworkBlocker:
             'celery'
         ]
 
-    def __init__(self, mode: auto = None, allowed_packages=None, filter_stack: bool = True):
+    def __init__(
+        self,
+        mode: auto = None,
+        allowed_packages=None,
+        filter_stack: bool = True
+    ):
         """
             A context manager that prevents network requests while active.
 
             The context manager has multiple modes:
-            * NetworkBlocker.Modes.STRICT (default) - Raise NetworkBlockException when any network requests are attempted
-            * NetworkBlocker.Modes.WARNING - Log a warning when any network requests are attempted
-            * NetworkBlocker.Modes.DISABLED - Do nothing. This is mainly useful if you want to temporarily disable NetworkBlocker without removing it.
+            * NetworkBlocker.Modes.STRICT (default) - Raise
+                NetworkBlockException when any network requests are attempted
+            * NetworkBlocker.Modes.WARNING - Log a warning when any network
+                requests are attempted
+            * NetworkBlocker.Modes.DISABLED - Do nothing. This is mainly
+                useful if you want to temporarily disable NetworkBlocker
+                without removing it.
 
             Recommended configurations for types of tests:
             * Unit tests - NetworkBlocker()
-            * Functional tests - NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.FUNCTIONAL)
+            * Functional tests -
+                NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.FUNCTIONAL)
 
             Args:
-                mode (enum.auto): Determines the behavior of NetworkBlocker when a network request is detected.
-                allowed_packages (list of strings): List of packages that are allowed to make network requests.
-                filter_stack (bool): Whether or not to filter out libraries from the call stack in WARNING mode so it's easier to see exactly where in application a request is made.
+                mode (enum.auto): Determines the behavior of NetworkBlocker
+                    when a network request is detected.
+                allowed_packages (list of strings): List of packages that are
+                    allowed to make network requests.
+                filter_stack (bool): Whether or not to filter out libraries
+                    from the call stack in WARNING mode so it's easier to see
+                    exactly where in application a request is made.
         """
 
-        # Ideally package filters in this use /usr/lib/pythonx.x but I couldn't find a could place that path is stored
+        # Ideally package filters in this use /usr/lib/pythonx.x but
+        #   I couldn't find a could place that path is stored
         # sys.path has too many other things
 
         self.mode = self.Modes.STRICT if mode is None else mode
-        self.allowed_packages = [] if allowed_packages is None else allowed_packages
+        self.allowed_packages = [] if allowed_packages is None \
+            else allowed_packages
         self.filter_stack = filter_stack
 
         try:
             import pytest
             if hasattr(pytest, 'config'):
-                self.capman = pytest.config.pluginmanager.getplugin('capturemanager')
+                self.capman = \
+                    pytest.config.pluginmanager.getplugin('capturemanager')
             else:
                 self.capman = None
         except ImportError:
@@ -81,13 +103,17 @@ class NetworkBlocker:
 
     def stack_allowed(self, stack) -> bool:
         """
-            Returns a boolean if a given call stack is allowed to make network requests.
-            This is determined by checking the packages used against allowed_packages.
+            Returns a boolean if a given call stack is allowed to make
+                network requests.
+            This is determined by checking the packages used
+                against allowed_packages.
         """
         return any(
             any(
                 '/%s/' % package in frame.filename and
-                frame.filename[:frame.filename.find('/%s/' % package)] in sys.path
+                frame.filename[
+                    :frame.filename.find('/%s/' % package)
+                ] in sys.path
                 for package in self.allowed_packages
             )
             for frame in stack
@@ -101,18 +127,24 @@ class NetworkBlocker:
                 raise NetworkBlockException()
             elif self.mode == self.Modes.WARNING:
                 # Circumvent pytest log capturing for this warning
-                stop_capture = self.capman and self.capman.is_globally_capturing()
+                stop_capture = self.capman and \
+                    self.capman.is_globally_capturing()
                 if stop_capture:
                     self.capman.suspend_global_capture()
 
                 print(file=sys.stderr)
-                print('A test that should not be doing so opened a network connection.', file=sys.stderr)
+                print('A test that should not be doing so opened ' +
+                      'a network connection.', file=sys.stderr)
                 print('This was most likely an API request.', file=sys.stderr)
                 print('It happened here:', file=sys.stderr)
 
-                # When we have fewer of these maybe we should remove this filter
+                # When we have fewer of these maybe we should
+                #   remove this filter
                 if self.filter_stack:
-                    stack = filter(lambda frame: 'python' not in frame.filename, stack)
+                    stack = filter(
+                        lambda frame: 'python' not in frame.filename,
+                        stack
+                    )
                 for st in traceback.format_list(stack):
                     print(st, end='', file=sys.stderr)
 

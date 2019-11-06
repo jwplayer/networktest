@@ -24,12 +24,16 @@ class HttpMockManager:
     @classmethod
     def __register_mock(cls, mock):
         """
-            Adds a mock to the list of mocks to call when a request attempt is made.
+            Adds a mock to the list of mocks to call when a request attempt
+              is made.
         """
         if mock not in cls.__mocks:
             try:
                 mock_id = cls.__mock_id(mock)
-                override_mock = next(existing_mock for existing_mock in cls.__mocks if cls.__mock_id(existing_mock) == mock_id)
+                override_mock = next(
+                    existing_mock for existing_mock in cls.__mocks
+                    if cls.__mock_id(existing_mock) == mock_id
+                )
                 if mock_id not in cls.__overriden_mocks:
                     cls.__overriden_mocks[mock_id] = []
                 cls.__overriden_mocks[mock_id].append(override_mock)
@@ -42,7 +46,8 @@ class HttpMockManager:
     @classmethod
     def __unregister_mock(cls, mock):
         """
-            Removes a mock from the list of mocks to call when a request attempt is made.
+            Removes a mock from the list of mocks to call when a request
+            attempt is made.
         """
         mock_id = cls.__mock_id(mock)
 
@@ -54,14 +59,16 @@ class HttpMockManager:
                     del cls.__overriden_mocks[mock_id]
                 cls.__mocks.append(overriden_mock)
 
-        if mock_id in cls.__overriden_mocks and mock in cls.__overriden_mocks[mock_id]:
+        if mock_id in cls.__overriden_mocks and \
+                mock in cls.__overriden_mocks[mock_id]:
             cls.__overriden_mocks[mock_id].remove(mock)
 
     @staticmethod
     def __replacement_send(self, data, http_mock):
         """
-            Replacement for http.client.HTTPConnection.send that can mock a request or send the request
-                depending on the behavior of the mocks registered with this class.
+            Replacement for http.client.HTTPConnection.send that can mock
+              a request or send the request depending on the behavior of
+              the mocks registered with this class.
         """
         for mock in http_mock.__mocks:
             if mock.mockable_send(self, data, mock) is False:
@@ -73,11 +80,13 @@ class HttpMockManager:
     @classmethod
     def enter(cls, mock):
         """
-            Register a mock with this class and begin mocking requests if we haven't already.
+            Register a mock with this class and begin mocking requests if
+              we haven't already.
 
             Duplicate mocks of the same class will override each other.
-              The last to call enter will be the only mock active.
-              As mocks are removed the most recently active mock of the same class will be reactivated.
+            The last to call enter will be the only mock active.
+            As mocks are removed the most recently active mock of the
+              same class will be reactivated.
         """
         if mock.mode == cls.Modes.DISABLED:
             return
@@ -94,7 +103,8 @@ class HttpMockManager:
     @classmethod
     def exit(cls, mock):
         """
-            Unregister a mock with this class and stop mocking requests if no other mocks are active.
+            Unregister a mock with this class and stop mocking requests if
+              no other mocks are active.
         """
         cls.__unregister_mock(mock)
 
@@ -106,7 +116,8 @@ class HttpMockManager:
 class HttpMock:
     """
         Context manager that optionally mocks HTTP requests.
-        This class does nothing useful on its own but is intended to be extended.
+        This class does nothing useful on its own but is
+          intended to be extended.
     """
 
     Modes = HttpMockManager.Modes
@@ -127,14 +138,19 @@ class HttpMock:
     @staticmethod
     def mockable_send(self, data, mock):
         """
-            A method that is called when an HTTP request is attempted and can be used to mock requests based on the data they contain.
+            A method that is called when an HTTP request is attempted and
+              can be used to mock requests based on the data they contain.
 
             Return False to cancel the actual HTTP request.
-            The easiest way to mock the response is by replacing self.response_class. ApiMock has an example of this.
+            The easiest way to mock the response is by replacing
+              self.response_class. ApiMock has an example of this.
 
             Args:
-                self(http.client.HTTPConnection): Reference to the HTTPConnection whose send method was called.
-                data(bytes): bytes that will be sent in the HTTP request if not stopped.
-                mock(context manager): A reference to the context manager that defines this mockable_send method.
+                self(http.client.HTTPConnection): Reference to the
+                  HTTPConnection whose send method was called.
+                data(bytes): bytes that will be sent in the HTTP request
+                  if not stopped.
+                mock(context manager): A reference to the context manager
+                  that defines this mockable_send method.
         """
         pass
