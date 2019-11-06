@@ -112,6 +112,7 @@ class HttpApiMock(HttpMock):
             By default this is a MagicMock.
         """
         mock = MagicMock()
+        mock.code = 200
         mock.getcode = lambda: mock.code
         return mock
 
