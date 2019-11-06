@@ -11,7 +11,7 @@ class ApiMockEndpoint:
         Describes mocking behavior for a single endpoint on an API managed by :class:`ApiMock`
 
         Attributes:
-          operation_id (str): Used to identify the endpoint when acessing this object from :class:`ApiMockEndpoints`. This should be the operationId in the service's swagger if it has one.
+          operation_id (str): Used to identify the endpoint when accessing this object from :class:`ApiMockEndpoints`. This should be the operationId in the service's OpenAPI spec if it has one.
           match_pattern (str): Regular expression used to identify the endpoint.
           response (function, lambda): Function called to generate a response from a request to this endpoint.
           request_mock (MagicMock): Mock that contains information about when this endpoint was called and with what arguments.
@@ -51,6 +51,7 @@ class ApiMockEndpoint:
             self.match_pattern,
             copy(self.response)
         )
+
 
 class ApiMockEndpoints:
     """
