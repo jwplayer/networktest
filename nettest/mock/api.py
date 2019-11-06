@@ -6,12 +6,12 @@ from copy import copy
 from .http import HttpMock
 
 
-class ApiMockEndpoint:
+class HttpApiMockEndpoint:
     """
-        Describes mocking behavior for a single endpoint on an API managed by :class:`ApiMock`
+        Describes mocking behavior for a single endpoint on an API managed by :class:`HttpApiMock`
 
         Attributes:
-          operation_id (str): Used to identify the endpoint when accessing this object from :class:`ApiMockEndpoints`. This should be the operationId in the service's OpenAPI spec if it has one.
+          operation_id (str): Used to identify the endpoint when accessing this object from :class:`HttpApiMockEndpoints`. This should be the operationId in the service's OpenAPI spec if it has one.
           match_pattern (str): Regular expression used to identify the endpoint.
           response (function, lambda): Function called to generate a response from a request to this endpoint.
           request_mock (MagicMock): Mock that contains information about when this endpoint was called and with what arguments.
@@ -46,16 +46,16 @@ class ApiMockEndpoint:
         return False
 
     def __copy__(self):
-        return ApiMockEndpoint(
+        return HttpApiMockEndpoint(
             self.operation_id,
             self.match_pattern,
             copy(self.response)
         )
 
 
-class ApiMockEndpoints:
+class HttpApiMockEndpoints:
     """
-        Returned by :class:`ApiMock`.__enter__ and used to expose a group of :class:`ApiMockEndpoint` that describes an API.
+        Returned by :class:`HttpApiMock`.__enter__ and used to expose a group of :class:`HttpApiMockEndpoint` that describes an API.
     """
 
     def __init__(self, endpoints):
@@ -65,7 +65,7 @@ class ApiMockEndpoints:
         return self.endpoints[name]
 
 
-class ApiMock(HttpMock):
+class HttpApiMock(HttpMock):
     """
         Context manager that mocks HTTP requests for a list of known hostnames.
     """
@@ -80,7 +80,7 @@ class ApiMock(HttpMock):
 
     def __enter__(self):
         super().__enter__()
-        return ApiMockEndpoints(self.endpoints)
+        return HttpApiMockEndpoints(self.endpoints)
 
     def __is_request_body(self, data):
         """
@@ -119,7 +119,7 @@ class ApiMock(HttpMock):
         """
             A more specific response to return on all HTTP requests for the specified hostnames.
 
-            Uses :class:`ApiMockEndpoint` to match regular expression for an endpoint to specific responses.
+            Uses :class:`HttpApiMockEndpoint` to match regular expression for an endpoint to specific responses.
         """
         mock = self.__get_default_response()
 
