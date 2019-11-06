@@ -29,7 +29,7 @@ class HttpApiMockEndpoint:
     def __request_matches(self, data):
         return re.match(self.match_pattern, data)
 
-    def __get_matched_response(self, data, mock):
+    def _get_matched_response(self, data, mock):
         match = self.__request_matches(data)
         if match:
             groups = {key: value.decode() for key, value in match.groupdict().items()}
@@ -124,7 +124,7 @@ class HttpApiMock(HttpMock):
         mock = self.__get_default_response()
 
         for endpoint in self.endpoints:
-            if endpoint.__get_matched_response(data, mock):
+            if endpoint._get_matched_response(data, mock):
                 break
 
         return mock
