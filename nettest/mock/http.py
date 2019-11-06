@@ -98,7 +98,7 @@ class HttpMockManager:
         """
         cls.__unregister_mock(mock)
 
-        if not cls.__mocks:
+        if not cls.__mocks and cls.__original_send is not None:
             http.client.HTTPConnection.send = cls.__original_send
             cls.__original_send = None
 
