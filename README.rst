@@ -115,7 +115,8 @@ HttpApiMock is provided to help with mocking API requests in unit and functional
                 assert e.read() == b'{"id": "1234"}'
 
             # It's possible to change the default responses inside of a test
-            # In most tests it would make sense to apply MyApiMock to all tests of a certain type and only explictly use MyApiMock when doing something like this.
+            # In most tests it would make sense to apply MyApiMock to all tests of a certain type
+            #   and only explictly use MyApiMock when doing something like this.
             mock_api.example.response = lambda groups: (204, None)
             response = urllib.request.urlopen('http://my-api/')
             response.read()
