@@ -1,2 +1,6 @@
 from .blocker import NetworkBlocker, NetworkBlockException
-__all__ = ('NetworkBlocker', 'NetworkBlockException')
+from .testcase import NetworkBlockedTest, NetworkLimitedTest
+__all__ = (
+    'NetworkBlocker', 'NetworkBlockException'
+    'NetworkBlockedTest', 'NetworkLimitedTest'
+)
