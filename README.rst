@@ -53,6 +53,7 @@ If you're in the process of migrating your tests to mock requests you may want t
 Some TestCases are provided that will apply NetworkBlocker to all tests in that case with some default settings.
 
 ::
+
     import urllib.request
     from my_database import Database
     from nettest import NetworkBlockedTest, NetworkLimitedTest
