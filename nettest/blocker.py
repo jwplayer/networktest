@@ -32,7 +32,6 @@ class NetworkBlocker:
             Lists of packages that may be permitted to make requests in
             certain situations
         """
-        # You may want to allow these for functional tests
         FUNCTIONAL = [
             'sqlalchemy',
             'redis',
@@ -71,10 +70,6 @@ class NetworkBlocker:
                     from the call stack in WARNING mode so it's easier to see
                     exactly where in application a request is made.
         """
-
-        # Ideally package filters in this use /usr/lib/pythonx.x but
-        #   I couldn't find a could place that path is stored
-        # sys.path has too many other things
 
         self.mode = self.Modes.STRICT if mode is None else mode
         self.allowed_packages = [] if allowed_packages is None \
@@ -126,7 +121,6 @@ class NetworkBlocker:
             if self.mode == self.Modes.STRICT:
                 raise NetworkBlockException()
             elif self.mode == self.Modes.WARNING:
-                # Circumvent pytest log capturing for this warning
                 stop_capture = self.capman and \
                     self.capman.is_globally_capturing()
                 if stop_capture:
@@ -138,9 +132,9 @@ class NetworkBlocker:
                 print('This was most likely an API request.', file=sys.stderr)
                 print('It happened here:', file=sys.stderr)
 
-                # When we have fewer of these maybe we should
-                #   remove this filter
                 if self.filter_stack:
+                    # Ideally this uses a full path (eg. /usr/lib/pythonx.x)
+                    # But how can we get that reliably without making assumptions?
                     stack = filter(
                         lambda frame: 'python' not in frame.filename,
                         stack

@@ -29,8 +29,6 @@ class HttpApiMockEndpoint:
         self.response = response
 
         self.request_mock = MagicMock()
-        # unimplemented but this could be a nice to have
-        # self.response_mock = MagicMock()
 
     def __request_matches(self, data):
         return re.match(self.match_pattern, data)
@@ -99,9 +97,9 @@ class HttpApiMock(HttpMock):
             This is needed because the request body is sent separately from
               the rest of the request.
         """
-        # I'm sure there's a much better way to determine this but
-        #   I wanted to keep this simple and avoid reimplementing
-        #   too much HTTP functionality
+        # Is there a better way to confirm this without:
+        #   * reimplementing HTTP library code
+        #   * overcomplicating the solution
         return data[-4:] != b'\r\n\r\n'
 
     def __get_request_hostname(self, data):
