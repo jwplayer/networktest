@@ -32,7 +32,7 @@ In some types of tests you may want to allow certain types of requests but not o
     from nettest import NetworkBlocker
     from my_database import Database
 
-    with NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.FUNCTIONAL):
+    with NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.DATASTORE):
         # This is fine
         Database.query('SELECT 1')
 

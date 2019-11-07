@@ -32,7 +32,7 @@ class NetworkBlocker:
             Lists of packages that may be permitted to make requests in
             certain situations
         """
-        FUNCTIONAL = [
+        DATASTORE = [
             'sqlalchemy',
             'redis',
             'celery'
@@ -59,7 +59,7 @@ class NetworkBlocker:
             Recommended configurations for types of tests:
             * Unit tests - NetworkBlocker()
             * Functional tests -
-                NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.FUNCTIONAL)
+                NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.DATASTORE)
 
             Args:
                 mode (enum.auto): Determines the behavior of NetworkBlocker
