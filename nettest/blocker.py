@@ -134,7 +134,8 @@ class NetworkBlocker:
 
                 if self.filter_stack:
                     # Ideally this uses a full path (eg. /usr/lib/pythonx.x)
-                    # But how can we get that reliably without making assumptions?
+                    #   but how can we get that reliably without
+                    #   making assumptions?
                     stack = filter(
                         lambda frame: 'python' not in frame.filename,
                         stack
