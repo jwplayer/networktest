@@ -50,6 +50,28 @@ If you're in the process of migrating your tests to mock requests you may want t
         # This will be allowed but a warning will be displayed
         urllib.request.urlopen('http://127.0.0.1').read()
 
+Some TestCases are provided that will apply NetworkBlocker to all tests in that case with some default settings.
+
+::
+    import urllib.request
+    from my_database import Database
+    from nettest import NetworkBlockedTest, NetworkLimitedTest
+
+    class MyTest(NetworkBlockedTest):
+
+        def test_blocker(self):
+            # A NetworkBlockException will be raised
+            urllib.request.urlopen('http://127.0.0.1').read()
+
+    class MyOtherTest(NetworkLimitedTest):
+
+        def test_blocker(self):
+            # This is fine
+            Database.query('SELECT 1')
+
+            # A NetworkBlockException will be raised
+            urllib.request.urlopen('http://127.0.0.1').read()
+
 Mocking API requests
 ====================
 
