@@ -184,3 +184,9 @@ HttpApiMock may also be used to create assertions for integration tests without 
         with MyApiMock(Mode=MyApiMock.Modes.WATCH) as mock_api:
             urllib.request.urlopen('http://my-api/example/1234/').read()
             mock_api.example.request_mock.assert_called_once()
+
+
+Versioning
+==========
+
+This package strictly follows `semantic versioning <https://semver.org>`_.
