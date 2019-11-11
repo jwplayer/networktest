@@ -1,6 +1,10 @@
 import unittest
 
-from . import NetworkBlocker
+from .blocker import (
+    NetworkBlocker,
+    PRESET_KWARGS_BLOCKED,
+    PRESET_KWARGS_LIMITED
+)
 
 
 class NetworkBlockerTest(unittest.TestCase):
@@ -29,9 +33,7 @@ class NetworkBlockedTest(NetworkBlockerTest):
           the NetworkBlocker used.
     """
 
-    blocker_kwargs = {
-        'mode': NetworkBlocker.Modes.STRICT,
-    }
+    blocker_kwargs = PRESET_KWARGS_BLOCKED
 
 
 class NetworkLimitedTest(NetworkBlockerTest):
@@ -44,10 +46,7 @@ class NetworkLimitedTest(NetworkBlockerTest):
           the NetworkBlocker used.
     """
 
-    blocker_kwargs = {
-        'mode': NetworkBlocker.Modes.STRICT,
-        'allowed_packages': NetworkBlocker.AllowablePackages.DATASTORE,
-    }
+    blocker_kwargs = PRESET_KWARGS_LIMITED
 
 
 __all__ = ('NetworkBlockedTest', 'NetworkLimitedTest')

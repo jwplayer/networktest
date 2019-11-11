@@ -46,6 +46,6 @@ setup(
         'Framework :: Pytest',
     ],
     entry_points={
-        'pytest11': ['nettest = nettest.pytest']
+        'pytest11': ['nettest = nettest.pytest.plugin']
     },
 )

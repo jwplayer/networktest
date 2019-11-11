@@ -2,7 +2,7 @@ import socket
 from pytest import fail
 
 from nettest import NetworkBlocker, NetworkBlockException
-from nettest.pytest import PytestIntegration
+from nettest.pytest.integration import PytestIntegration
 
 
 def send():

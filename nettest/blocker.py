@@ -3,7 +3,7 @@ import traceback
 import socket
 from enum import Enum, auto
 
-from .pytest import PytestIntegration
+from .pytest.integration import PytestIntegration
 
 
 class NetworkBlockException(Exception):
@@ -139,3 +139,12 @@ class NetworkBlocker:
                     PytestIntegration.capman.resume_global_capture()
 
         return self.original_socket(*args, **kwargs)
+
+
+PRESET_KWARGS_BLOCKED = {
+    'mode': NetworkBlocker.Modes.STRICT,
+}
+PRESET_KWARGS_LIMITED = {
+    'mode': NetworkBlocker.Modes.STRICT,
+    'allowed_packages': NetworkBlocker.AllowablePackages.DATASTORE,
+}

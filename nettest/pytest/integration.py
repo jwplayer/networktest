@@ -10,7 +10,3 @@ try:
             pytest.config.pluginmanager.getplugin('capturemanager')
 except ImportError:
     pass
-
-
-def pytest_configure(config):
-    PytestIntegration.capman = config.pluginmanager.getplugin('capturemanager')
