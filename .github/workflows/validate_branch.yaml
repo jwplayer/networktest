@@ -1,9 +1,10 @@
-name: Deploy
+name: Validate Branch
 
 on:
   push:
-    tags:
-    - '*'
+    branches:
+    - master
+    - 'rc/*'
 
 jobs:
   build:
