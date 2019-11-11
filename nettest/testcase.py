@@ -6,12 +6,12 @@ from . import NetworkBlocker
 class NetworkBlockerTest(unittest.TestCase):
 
     _blocker = None
-    _blocker_kwargs = {}
+    blocker_kwargs = {}
 
     def setUp(self):
         super().setUp()
 
-        self._blocker = NetworkBlocker(**self._blocker_kwargs)
+        self._blocker = NetworkBlocker(**self.blocker_kwargs)
         self._blocker.__enter__()
 
     def tearDown(self):
@@ -24,9 +24,12 @@ class NetworkBlockerTest(unittest.TestCase):
 class NetworkBlockedTest(NetworkBlockerTest):
     """
         TestCase that prevents all network requests.
+
+        Override or modify the blocker_kwargs attribute to configure
+          the NetworkBlocker used.
     """
 
-    _blocker_kwargs = {
+    blocker_kwargs = {
         'mode': NetworkBlocker.Modes.STRICT,
     }
 
@@ -36,9 +39,12 @@ class NetworkLimitedTest(NetworkBlockerTest):
         TestCase that prevents network requests except for those in a whitelist
           of packages commonly used for core functionality in an API
           (such as querying a database).
+
+        Override or modify the blocker_kwargs attribute to configure
+          the NetworkBlocker used.
     """
 
-    _blocker_kwargs = {
+    blocker_kwargs = {
         'mode': NetworkBlocker.Modes.STRICT,
         'allowed_packages': NetworkBlocker.AllowablePackages.DATASTORE,
     }
