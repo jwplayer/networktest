@@ -50,6 +50,9 @@ If you're in the process of migrating your tests to mock requests you may want t
         # This will be allowed but a warning will be displayed
         urllib.request.urlopen('http://127.0.0.1').read()
 
+TestCase Support
+----------------
+
 Some TestCases are provided that will apply NetworkBlocker to all tests in that case with some default settings.
 
 .. code-block:: python
@@ -72,6 +75,37 @@ Some TestCases are provided that will apply NetworkBlocker to all tests in that 
 
             # A NetworkBlockException will be raised
             urllib.request.urlopen('http://127.0.0.1').read()
+
+pytest Support
+--------------
+
+pytest markers networkblocked and networklimited are available to apply NetworkBlocker to tests. These may be applied to modules, classes, methods or any other way pytest markers are supported. 
+
+.. code-block:: python
+
+    from pytest import mark
+
+    @mark.networkblocked
+    def test_blocked(self):
+        # A NetworkBlockException will be raised
+        urllib.request.urlopen('http://127.0.0.1').read()
+
+    @mark.networklimited
+    def test_limited(self):
+        # This is fine
+        Database.query('SELECT 1')
+
+        # A NetworkBlockException will be raised
+        urllib.request.urlopen('http://127.0.0.1').read()
+
+NetworkBlocker may be applied to an entire directory by adding an autouse fixture to a conftest.py file in that directory.
+
+.. code-block:: python
+
+    @pytest.fixture(scope='module', autouse=True)
+    def networkblocker():
+        with NetworkBlocker():
+            yield
 
 Mocking API requests
 ====================
