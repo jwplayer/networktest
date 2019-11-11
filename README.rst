@@ -1,12 +1,12 @@
-nettest
+Nettest
 =======
 
-nettest makes it easier to test and enforce testing rules for Python applications that make network requests.
+A library to test and enforce testing rules for Python applications that make network requests.
 
 Installation
 ============
 
-::
+.. code-block:: bash
 
     pip install nettest
 
@@ -15,7 +15,7 @@ Blocking network requests
 
 nettest provides a context manager NetworkBlocker that can be used to prevent tests or an application from making network requests.
 
-::
+.. code-block:: python
 
     import urllib.request
     from nettest import NetworkBlocker
@@ -26,7 +26,7 @@ nettest provides a context manager NetworkBlocker that can be used to prevent te
 
 In some types of tests you may want to allow certain types of requests but not others. When testing an API you may want to allow tests to access that API's database but not make requests to another API.
 
-::
+.. code-block:: python
 
     import urllib.request
     from nettest import NetworkBlocker
@@ -41,7 +41,7 @@ In some types of tests you may want to allow certain types of requests but not o
 
 If you're in the process of migrating your tests to mock requests you may want to use NetworkBlocker's warning mode. This mode will allow requests but display a warning.
 
-::
+.. code-block:: python
 
     import urllib.request
     from nettest import NetworkBlocker
@@ -52,7 +52,7 @@ If you're in the process of migrating your tests to mock requests you may want t
 
 Some TestCases are provided that will apply NetworkBlocker to all tests in that case with some default settings.
 
-::
+.. code-block:: python
 
     import urllib.request
     from my_database import Database
@@ -78,7 +78,7 @@ Mocking API requests
 
 HttpApiMock is provided to help with mocking API requests in unit and functional tests.
 
-::
+.. code-block:: python
 
     import urllib.request
     from nettest.mock import HttpApiMock
@@ -127,7 +127,7 @@ Integration tests
 
 HttpApiMock may also be used to create assertions for integration tests without preventing API requests from being made.
 
-::
+.. code-block:: python
 
     import urllib.request
     from nettest.mock import HttpApiMock
