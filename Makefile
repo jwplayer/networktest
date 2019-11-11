@@ -1,5 +1,5 @@
 test:
-	python setup.py test --addopts '--cov=nettest --cov-fail-under=80'
+	python setup.py test --addopts '--cov=nettest --cov-fail-under=70'
 
 lint:
 	python setup.py test --addopts '--flake8 nettest tests'
