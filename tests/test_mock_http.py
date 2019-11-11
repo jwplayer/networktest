@@ -2,8 +2,8 @@ import urllib.request
 from unittest.mock import MagicMock
 from pytest import fail
 
-from nettest import NetworkBlocker, NetworkBlockException
-from nettest.mock import HttpMock
+from networktest import NetworkBlocker, NetworkBlockException
+from networktest.mock import HttpMock
 
 
 def send_request():

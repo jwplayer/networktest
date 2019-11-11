@@ -4,14 +4,14 @@ with open('README.rst') as f:
     readme = f.read()
 
 setup(
-    name='nettest',
+    name='networktest',
     description='Tools for testing applications that make network requests.',
     long_description=readme,
     packages=find_packages(exclude=['tests']),
     use_scm_version=True,
     author='Matt Wisniewski',
     author_email='mattw@jwplayer.com',
-    url='https://github.com/jwplayer/nettest',
+    url='https://github.com/jwplayer/networktest',
     keywords=[
         'network',
         'test',
@@ -46,6 +46,6 @@ setup(
         'Framework :: Pytest',
     ],
     entry_points={
-        'pytest11': ['nettest = nettest.pytest.plugin']
+        'pytest11': ['networktest = networktest.pytest.plugin']
     },
 )

@@ -1,9 +1,9 @@
 test:
-	python setup.py test --addopts '--cov=nettest --cov-fail-under=70'
+	python setup.py test --addopts '--cov=networktest --cov-fail-under=70'
 
 lint:
-	python setup.py test --addopts '--flake8 nettest tests'
+	python setup.py test --addopts '--flake8 networktest tests'
 
 coverage:
-	python setup.py test --addopts '--cov=nettest --cov-report=html'
+	python setup.py test --addopts '--cov=networktest --cov-report=html'
 	open htmlcov/index.html

@@ -1,4 +1,4 @@
-Nettest
+Networktest
 =======
 
 A library to test and enforce testing rules for Python applications that make network requests.
@@ -8,17 +8,17 @@ Installation
 
 .. code-block:: bash
 
-    pip install nettest
+    pip install networktest
 
 Blocking network requests
 =========================
 
-nettest provides a context manager NetworkBlocker that can be used to prevent tests or an application from making network requests.
+networktest provides a context manager NetworkBlocker that can be used to prevent tests or an application from making network requests.
 
 .. code-block:: python
 
     import urllib.request
-    from nettest import NetworkBlocker
+    from networktest import NetworkBlocker
 
     with NetworkBlocker():
         # A NetworkBlockException will be raised
@@ -29,7 +29,7 @@ In some types of tests you may want to allow certain types of requests but not o
 .. code-block:: python
 
     import urllib.request
-    from nettest import NetworkBlocker
+    from networktest import NetworkBlocker
     from my_database import Database
 
     with NetworkBlocker(allowed_packages=NetworkBlocker.AllowablePackages.DATASTORE):
@@ -44,7 +44,7 @@ If you're in the process of migrating your tests to mock requests you may want t
 .. code-block:: python
 
     import urllib.request
-    from nettest import NetworkBlocker
+    from networktest import NetworkBlocker
 
     with NetworkBlocker(mode=NetworkBlocker.Modes.WARNING):
         # This will be allowed but a warning will be displayed
@@ -59,7 +59,7 @@ Some TestCases are provided that will apply NetworkBlocker to all tests in that 
 
     import urllib.request
     from my_database import Database
-    from nettest import NetworkBlockedTest, NetworkLimitedTest
+    from networktest import NetworkBlockedTest, NetworkLimitedTest
 
     class MyTest(NetworkBlockedTest):
 
@@ -115,7 +115,7 @@ HttpApiMock is provided to help with mocking API requests in unit and functional
 .. code-block:: python
 
     import urllib.request
-    from nettest.mock import HttpApiMock
+    from networktest.mock import HttpApiMock
 
     class MyApiMock(HttpApiMock):
 
@@ -164,7 +164,7 @@ HttpApiMock may also be used to create assertions for integration tests without 
 .. code-block:: python
 
     import urllib.request
-    from nettest.mock import HttpApiMock
+    from networktest.mock import HttpApiMock
 
     class MyApiMock(HttpApiMock):
 

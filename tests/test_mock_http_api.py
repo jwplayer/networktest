@@ -2,8 +2,8 @@ import urllib.request
 import urllib.error
 from pytest import fail
 
-from nettest import NetworkBlocker, NetworkBlockException
-from nettest.mock import HttpApiMock, HttpApiMockEndpoint
+from networktest import NetworkBlocker, NetworkBlockException
+from networktest.mock import HttpApiMock, HttpApiMockEndpoint
 
 
 class TestMock(HttpApiMock):

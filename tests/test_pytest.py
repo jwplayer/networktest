@@ -1,7 +1,7 @@
 import socket
 from pytest import fail, mark
 
-from nettest import NetworkBlockException
+from networktest import NetworkBlockException
 
 
 def send():

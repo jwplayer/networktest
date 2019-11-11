@@ -1,7 +1,7 @@
 import socket
 from pytest import fail
 
-from nettest import (
+from networktest import (
     NetworkBlockException,
     NetworkBlockedTest,
     NetworkLimitedTest
