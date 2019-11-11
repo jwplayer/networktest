@@ -3,6 +3,8 @@ import traceback
 import socket
 from enum import Enum, auto
 
+from .pytest import PytestIntegration
+
 
 class NetworkBlockException(Exception):
     """
@@ -76,16 +78,6 @@ class NetworkBlocker:
             else allowed_packages
         self.filter_stack = filter_stack
 
-        try:
-            import pytest
-            if hasattr(pytest, 'config'):
-                self.capman = \
-                    pytest.config.pluginmanager.getplugin('capturemanager')
-            else:
-                self.capman = None
-        except ImportError:
-            self.capman = None
-
     def __enter__(self):
         self.original_socket = socket.socket
 
@@ -121,10 +113,10 @@ class NetworkBlocker:
             if self.mode == self.Modes.STRICT:
                 raise NetworkBlockException()
             elif self.mode == self.Modes.WARNING:
-                stop_capture = self.capman and \
-                    self.capman.is_globally_capturing()
+                stop_capture = PytestIntegration.capman and \
+                    PytestIntegration.capman.is_globally_capturing()
                 if stop_capture:
-                    self.capman.suspend_global_capture()
+                    PytestIntegration.capman.suspend_global_capture()
 
                 print(file=sys.stderr)
                 print('A test that should not be doing so opened ' +
@@ -144,6 +136,6 @@ class NetworkBlocker:
                     print(st, end='', file=sys.stderr)
 
                 if stop_capture:
-                    self.capman.resume_global_capture()
+                    PytestIntegration.capman.resume_global_capture()
 
         return self.original_socket(*args, **kwargs)

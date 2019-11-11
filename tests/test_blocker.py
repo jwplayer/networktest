@@ -2,6 +2,7 @@ import socket
 from pytest import fail
 
 from nettest import NetworkBlocker, NetworkBlockException
+from nettest.pytest import PytestIntegration
 
 
 def send():
@@ -19,10 +20,22 @@ def test_mode_strict():
 
 
 def test_mode_warning(capsys):
+    capman = PytestIntegration.capman
+    PytestIntegration.capman = None
+    try:
+        with NetworkBlocker(mode=NetworkBlocker.Modes.WARNING):
+            send()
+        err = capsys.readouterr().err
+        assert len(err) > 0
+    finally:
+        PytestIntegration.capman = capman
+
+
+def test_mode_warning_disables_pytest_capture(capsys):
     with NetworkBlocker(mode=NetworkBlocker.Modes.WARNING):
         send()
     err = capsys.readouterr().err
-    assert len(err) > 0
+    assert len(err) == 0
 
 
 def test_mode_disabled(capsys):
