@@ -1,5 +1,5 @@
 Networktest
-=======
+===========
 
 A library to test and enforce testing rules for Python applications that make network requests.
 
@@ -79,7 +79,7 @@ Some TestCases are provided that will apply NetworkBlocker to all tests in that 
 pytest Support
 --------------
 
-pytest markers networkblocked and networklimited are available to apply NetworkBlocker to tests. These may be applied to modules, classes, methods or any other way pytest markers are supported. 
+pytest markers networkblocked and networklimited are available to apply NetworkBlocker to tests. These may be applied to modules, classes, methods or any other way pytest markers are supported.
 
 .. code-block:: python
 
