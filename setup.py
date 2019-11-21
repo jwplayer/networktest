@@ -31,6 +31,7 @@ setup(
         'pytest',
         'pytest-flake8',
         'pytest-cov',
+        'requests'
     ],
     include_package_data=True,
     zip_safe=False,
