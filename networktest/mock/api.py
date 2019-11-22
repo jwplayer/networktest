@@ -34,16 +34,19 @@ class HttpApiMockEndpoint:
         return re.match(self.match_pattern, data)
 
     def _get_matched_response(self, data, mock):
+
         match = self.__request_matches(data)
         if match:
             groups = {
                 key: value.decode() for key, value in match.groupdict().items()
             }
+
             (code, body) = self.response(groups)
             mock.code = code
             if body is not None:
                 body = json.dumps(body).encode()
             mock.read = lambda: body
+            mock.readlines = lambda: [body]
 
             self.request_mock(groups)
 
