@@ -2,8 +2,34 @@ import re
 import json
 from unittest.mock import MagicMock
 from copy import copy
+from http.client import HTTPResponse
+import io
 
 from .http import HttpMock
+
+
+__all__ = (
+    'HttpApiMockEndpoint', 'HttpApiMockEndpoints',
+    'HttpApiMock',
+)
+
+
+def make_response_class(status_code, body):
+
+    status = str(status_code)
+    data = 'HTTP/1.1 {status}\n\n{body}'.format(
+        status=status,
+        body=body
+    ).encode()
+
+    class HttpApiMockResponse(HTTPResponse):
+        def __init__(self, sock, *args, **kwargs):
+            sock = MagicMock()
+            super().__init__(sock, *args, **kwargs)
+
+            self.fp = io.BytesIO(data)
+
+    return HttpApiMockResponse
 
 
 class HttpApiMockEndpoint:
@@ -33,24 +59,24 @@ class HttpApiMockEndpoint:
     def __request_matches(self, data):
         return re.match(self.match_pattern, data)
 
-    def _get_matched_response(self, data, mock):
-
+    def _get_matched_response(self, data):
         match = self.__request_matches(data)
         if match:
             groups = {
                 key: value.decode() for key, value in match.groupdict().items()
             }
-
-            (code, body) = self.response(groups)
-            mock.code = code
-            if body is not None:
-                body = json.dumps(body).encode()
-            mock.read = lambda: body
-            mock.readlines = lambda: [body]
-
             self.request_mock(groups)
 
-            return True
+            (code, body) = self.response(groups)
+            if body is None:
+                body = ''
+            else:
+                body = json.dumps(body)
+
+            return make_response_class(
+                status_code=code,
+                body=body
+            )
 
         return False
 
@@ -126,10 +152,10 @@ class HttpApiMock(HttpMock):
               specified hostnames.
             By default this is a MagicMock.
         """
-        mock = MagicMock()
-        mock.code = 200
-        mock.getcode = lambda: mock.code
-        return mock
+        return make_response_class(
+            status_code=200,
+            body=''
+        )
 
     def __get_targeted_response(self, data):
         """
@@ -139,13 +165,13 @@ class HttpApiMock(HttpMock):
             Uses :class:`HttpApiMockEndpoint` to match regular expression for
               an endpoint to specific responses.
         """
-        mock = self.__get_default_response()
 
         for endpoint in self.endpoints:
-            if endpoint._get_matched_response(data, mock):
-                break
+            response_class = endpoint._get_matched_response(data)
+            if response_class:
+                return response_class
 
-        return mock
+        return self.__get_default_response()
 
     @staticmethod
     def mockable_send(self, data, mock):
@@ -164,9 +190,9 @@ class HttpApiMock(HttpMock):
         """
         hostname = mock.__get_request_hostname(data)
         if hostname and hostname in mock.hostnames:
-            response_mock = mock.__get_targeted_response(data)
+            response_class = mock.__get_targeted_response(data)
             if mock.mode == mock.Modes.MOCK:
-                self.response_class = lambda *args, **kwargs: response_mock
+                self.response_class = response_class
 
             mock.__mock_next_body = True
             return False

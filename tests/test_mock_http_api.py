@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.error
 from pytest import fail
+import requests
 
 from networktest import NetworkBlocker, NetworkBlockException
 from networktest.mock import HttpApiMock, HttpApiMockEndpoint
@@ -59,6 +60,19 @@ def test_request_matched_endpoint():
         }
 
 
+def test_request_matched_endpoint_requests():
+    with TestMock() as mock_test:
+        with NetworkBlocker():
+            response = requests.get('http://127.0.0.1/test/abc/')
+        assert response.status_code == 418
+        assert response.content == b'{"id": "abc"}'
+
+        mock_test.test.request_mock.assert_called_once()
+        assert mock_test.test.request_mock.call_args[0][0] == {
+            'test_id': 'abc'
+        }
+
+
 def test_request_override_response():
     with TestMock() as mock_test:
         mock_test.test.response = lambda groups: (204, None)
@@ -66,7 +80,7 @@ def test_request_override_response():
             response = urllib.request.urlopen(
                 'http://127.0.0.1/test/abc/', timeout=0
             )
-            assert response.read() is None
+            assert response.read() == b''
         assert mock_test.test.request_mock.called_once()
         assert response.getcode() == 204
 
