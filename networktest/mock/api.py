@@ -8,6 +8,12 @@ import io
 from .http import HttpMock
 
 
+__all__ = (
+    'HttpApiMockEndpoint', 'HttpApiMockEndpoints',
+    'HttpApiMock',
+)
+
+
 def make_response_class(status_code, body):
 
     status = str(status_code)
