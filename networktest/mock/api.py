@@ -2,7 +2,7 @@ import re
 import json
 from unittest.mock import MagicMock
 from copy import copy
-from http.client import HTTPResponse
+from http.client import HTTPResponse, responses
 import io
 
 from .http import HttpMock
@@ -15,8 +15,10 @@ __all__ = (
 
 
 def make_response_class(status_code, body):
-
     status = str(status_code)
+    if status_code in responses:
+        status += ' ' + responses[status_code]
+
     data = 'HTTP/1.1 {status}\n\n{body}'.format(
         status=status,
         body=body
