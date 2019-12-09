@@ -40,6 +40,7 @@ def test_request_matched_hostname_only():
             response = urllib.request.urlopen('http://127.0.0.1', timeout=0)
             response.read()
         assert response.getcode() == 200
+        assert response.reason == 'OK'
         mock_test.test.request_mock.assert_not_called()
 
 
@@ -83,6 +84,7 @@ def test_request_override_response():
             assert response.read() == b''
         assert mock_test.test.request_mock.called_once()
         assert response.getcode() == 204
+        assert response.reason == 'No Content'
 
 
 def test_request_override_removed_nested_mock():
