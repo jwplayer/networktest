@@ -4,7 +4,7 @@ from pytest import fail
 import requests
 
 from networktest import NetworkBlocker, NetworkBlockException
-from networktest.mock import HttpApiMock, HttpApiMockEndpoint
+from networktest.mock import HttpApiMock, HttpApiMockEndpoint, HttpApiMockResponse
 
 
 class TestMock(HttpApiMock):
@@ -20,6 +20,16 @@ class TestMock(HttpApiMock):
             response=lambda groups: (418, {
                 'id': groups['test_id'],
             })
+        ),
+        HttpApiMockEndpoint(
+            operation_id='test_raw_str',
+            match_pattern=b'^GET /test_raw_str/(?P<test_id>.*?)/',
+            response=lambda groups: HttpApiMockResponse(f"HTTP/1.1 418 I'm a teapot\n\n{groups['test_id']}")
+        ),
+        HttpApiMockEndpoint(
+            operation_id='test_raw_bytes',
+            match_pattern=b'^GET /test_raw_bytes/(?P<test_id>.*?)/',
+            response=lambda groups: HttpApiMockResponse(b"HTTP/1.1 418 I'm a teapot\n\ntest")
         )
     ]
 
@@ -133,3 +143,29 @@ def test_request_override_removed_mock_twice():
         assert mock_test.test.request_mock.call_args[0][0] == {
             'test_id': 'abc'
         }
+
+
+def test_request_matched_endpoint_raw_str():
+    with TestMock() as mock_test:
+        try:
+            with NetworkBlocker():
+                urllib.request.urlopen(
+                    'http://127.0.0.1/test_raw_str/abc/', timeout=0
+                ).read()
+            fail('Request should raise HTTPError')
+        except urllib.error.HTTPError as e:
+            assert e.code == 418
+            assert e.read() == b'abc'
+
+
+def test_request_matched_endpoint_raw_bytes():
+    with TestMock() as mock_test:
+        try:
+            with NetworkBlocker():
+                urllib.request.urlopen(
+                    'http://127.0.0.1/test_raw_bytes/abc/', timeout=0
+                ).read()
+            fail('Request should raise HTTPError')
+        except urllib.error.HTTPError as e:
+            assert e.code == 418
+            assert e.read() == b'test'
