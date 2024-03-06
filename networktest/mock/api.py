@@ -10,7 +10,7 @@ from .http import HttpMock
 
 __all__ = (
     'HttpApiMockEndpoint', 'HttpApiMockEndpoints',
-    'HttpApiMock',
+    'HttpApiMock', 'HttpApiMockResponse'
 )
 
 
@@ -24,14 +24,38 @@ def make_response_class(status_code, body):
         body=body
     ).encode()
 
-    class HttpApiMockResponse(HTTPResponse):
-        def __init__(self, sock, *args, **kwargs):
-            sock = MagicMock()
-            super().__init__(sock, *args, **kwargs)
+    return HttpApiMockResponse(data)._get_class()
 
-            self.fp = io.BytesIO(data)
 
-    return HttpApiMockResponse
+class HttpApiMockResponse:
+    """
+        Used by an :class:`HttpApiMockEndpoint` to generate an HTTP response.
+
+        Attributes:
+          data(bytes, str): The full HTTP response.
+    """
+    def __init__(self, data):
+        if isinstance(data, str):
+            data = data.encode()
+        elif not isinstance(data, bytes):
+            raise TypeError("data must be either bytes or str")
+        self._data = data
+
+    def _get_class(self):
+        """
+            Returns:
+                http.client.HTTPResponse: Class that http.client uses to manage an HTTP response.
+        """
+        data = self._data
+
+        class _HTTPResponseMock(HTTPResponse):
+            def __init__(self, sock, *args, **kwargs):
+                sock = MagicMock()
+                super().__init__(sock, *args, **kwargs)
+
+                self.fp = io.BytesIO(data)
+
+        return _HTTPResponseMock
 
 
 class HttpApiMockEndpoint:
@@ -69,16 +93,21 @@ class HttpApiMockEndpoint:
             }
             self.request_mock(groups)
 
-            (code, body) = self.response(groups)
-            if body is None:
-                body = ''
-            else:
-                body = json.dumps(body)
+            response = self.response(groups)
+            if isinstance(response, tuple):
+                (code, body) = self.response(groups)
+                if body is None:
+                    body = ''
+                else:
+                    body = json.dumps(body)
 
-            return make_response_class(
-                status_code=code,
-                body=body
-            )
+                return make_response_class(
+                    status_code=code,
+                    body=body
+                )
+            if isinstance(response, HttpApiMockResponse):
+                return response._get_class()
+            raise TypeError("HttpApiMockEndpoint response must be of type tuple or HttpApiMockResponse")
 
         return False
 

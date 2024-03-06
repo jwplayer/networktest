@@ -3,6 +3,11 @@
 Changelog
 =========
 
+1.1.0
+=====
+
+* Add an HttpApiMockResponse class for mocking the entire HTTP response (not just status and a JSON body).
+
 1.0.5
 =====
 
