@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "networktest"
+description = "Tools for testing applications that make network requests."
+readme = "README.md"
+license = { text = "Apache License 2.0" }
+authors = [{name = "Matt Wisniewski", email = "mattw@jwplayer.com"}]
+version = "2.0.0"
+requires-python = ">=3.9.0"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Framework :: Pytest",
+]
+keywords = [
+    "network",
+    "test",
+    "functional",
+    "unit",
+    "integration",
+    "api",
+    "http",
+    "request"
+]
+
+[project.urls]
+homepage = "https://github.com/jwplayer/networktest"
+
+[project.entry-points.pytest11]
+networktest = "networktest.pytest.plugin"
+
+[tool.setuptools.packages.find]
+include = ["networktest"]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-flake8",
+    "pytest-cov",
+    "requests"
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests"]

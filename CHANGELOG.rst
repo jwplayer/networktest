@@ -3,6 +3,12 @@
 Changelog
 =========
 
+2.0.0
+=====
+
+* Removed support for Python 3.5, 3.6 and 3.7. Added support for Python 3.9-3.13.
+* Add support for newer versions of setuptools.
+
 1.1.0
 =====
 
