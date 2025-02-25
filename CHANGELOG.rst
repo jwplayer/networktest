@@ -3,6 +3,11 @@
 Changelog
 =========
 
+2.0.1
+=====
+
+* Address a bug with submodules.
+
 2.0.0
 =====
 

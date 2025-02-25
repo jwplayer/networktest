@@ -23,5 +23,5 @@ clean:
 	rm -rf *.egg-info
 
 release: clean
-	python setup.py sdist bdist_wheel
+	python -mbuild
 	twine upload dist/*

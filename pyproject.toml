@@ -8,7 +8,7 @@ description = "Tools for testing applications that make network requests."
 readme = "README.md"
 license = { text = "Apache License 2.0" }
 authors = [{name = "Matt Wisniewski", email = "mattw@jwplayer.com"}]
-version = "2.0.0"
+version = "2.0.1"
 requires-python = ">=3.9.0"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -37,7 +37,7 @@ homepage = "https://github.com/jwplayer/networktest"
 networktest = "networktest.pytest.plugin"
 
 [tool.setuptools.packages.find]
-include = ["networktest"]
+include = ["networktest*"]
 
 [project.optional-dependencies]
 tests = [
